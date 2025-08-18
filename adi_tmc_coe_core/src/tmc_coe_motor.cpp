@@ -396,7 +396,7 @@ void TmcCoeMotor::cmdAbsPosCallback(const std_msgs::msg::Int32::SharedPtr msg)
   RCLCPP_INFO_STREAM(logger_, "[" << __func__ << "] called");
   int32_t val = 0;
   int SDO_PDO_retries = p_node_->get_parameter("SDO_PDO_retries").as_int();
-  val = static_cast<int32_t>(msg->data / param_add_ratio_vel_);
+  val = static_cast<int32_t>(msg->data / param_add_ratio_pos_);
   RCLCPP_DEBUG_STREAM(logger_, "val= " << val);
 
   p_tmc_coe_interpreter_->startCycleCounter();
@@ -464,7 +464,7 @@ void TmcCoeMotor::cmdRelPosCallback(const std_msgs::msg::Int32::SharedPtr msg)
   RCLCPP_INFO_STREAM(logger_, "[" << __func__ << "] called");
   int32_t val = 0;
   int SDO_PDO_retries = p_node_->get_parameter("SDO_PDO_retries").as_int();
-  val = static_cast<int32_t>(msg->data / param_add_ratio_vel_);
+  val = static_cast<int32_t>(msg->data / param_add_ratio_pos_);
   RCLCPP_DEBUG_STREAM(logger_, "val= " << val);
 
   p_tmc_coe_interpreter_->startCycleCounter();

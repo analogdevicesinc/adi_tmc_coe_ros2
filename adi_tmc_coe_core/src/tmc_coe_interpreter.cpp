@@ -245,9 +245,25 @@ nmt_state_t TmcCoeInterpreter::changeNMTState(uint8_t slave_number, nmt_state_t 
   {
     ec_slave[slave_number].state = ec_slave_state;
     ec_writestate(slave_number);
-    current_state = static_cast<nmt_state_t>(ec_statecheck(
+
+    /* After error acknowledgment, the slave transitions to the requested state. 
+     * The ERROR bit (0x10) is cleared, and AL_Status reflects only the new state. 
+     * Ref: https://manualmachine.com/beckhoff/ethercatregisterssectionii/1503469-user-manual/#33
+     * In this implementation, we request SAFE_OP after error acknowledgement 
+     * to ensure a safe recovery state.*/
+    if (SAFE_OP_ERROR_ACK != ec_slave_state)
+    {
+      current_state = static_cast<nmt_state_t>(ec_statecheck(
         slave_number, ec_slave_state,
         EC_TIMEOUTSTATE));
+    }
+    else
+    {
+      current_state = static_cast<nmt_state_t>(ec_statecheck(
+        slave_number, EC_STATE_SAFE_OP,
+        EC_TIMEOUTSTATE));
+    }
+
     if ((SAFE_OP_ERROR_ACK == ec_slave_state) && (SAFE_OP == current_state))
     {
       b_result = true;
